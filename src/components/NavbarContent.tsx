@@ -163,7 +163,7 @@ export default function NavbarContent({
 							</Popover>
 						</div>
 						<Link className="font-semibold mr-6" href="/">
-							BRANDING
+							Flavatown
 						</Link>
 					</div>
 					<UserMenu className="sm:hidden" session={session} />
