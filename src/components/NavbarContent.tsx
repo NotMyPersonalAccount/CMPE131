@@ -80,7 +80,7 @@ function NavbarLinks({ onboarded }: NavbarLinksProps) {
 				<Link className="text-foreground/60" href="/browse">
 					Browse
 				</Link>
-				<Link className="text-foreground/60" href="/post">
+				<Link className="text-foreground/60" href="/create">
 					Create
 				</Link>
 			</>
