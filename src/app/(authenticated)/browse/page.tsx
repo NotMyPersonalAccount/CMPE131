@@ -6,11 +6,22 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import prisma from "@/lib/prisma";
 import { HeartIcon } from "lucide-react";
 
 export default async function BrowsePage() {
-	const recipes = await prisma.recipe.findMany({});
+	const recipes = await prisma.recipe.findMany({
+		include: {
+			user: true,
+		},
+	});
+
 	return (
 		<section className="py-16 px-10 sm:px-36">
 			<div className="flex flex-wrap justify-between gap-4">
@@ -32,7 +43,14 @@ export default async function BrowsePage() {
 										0
 										<HeartIcon />
 									</div>
-									<div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+									<TooltipProvider>
+										<Tooltip>
+											<TooltipTrigger>
+												<div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+											</TooltipTrigger>
+											<TooltipContent>{recipe.user.name}</TooltipContent>
+										</Tooltip>
+									</TooltipProvider>
 								</div>
 							</CardFooter>
 						</Card>
