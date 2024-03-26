@@ -131,7 +131,9 @@ export default function NavbarContent({
 								</PopoverContent>
 							</Popover>
 						</div>
-						<span className="font-semibold mr-6">BRANDING</span>
+						<Link className="font-semibold mr-6" href="/">
+							BRANDING
+						</Link>
 					</div>
 					<UserMenu className="sm:hidden" session={session} />
 				</div>
