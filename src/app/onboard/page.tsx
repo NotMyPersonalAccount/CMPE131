@@ -6,18 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 
 export default async function Onboard() {
-	const session = await getSession();
-	if (!session) {
-		redirect("/api/auth/login");
-	}
-
+	const session = (await getSession())!;
 	const user = await prisma.user.findUnique({
 		where: {
 			email: session.user.email,
 		},
 	});
 	if (user) {
-		redirect("/home");
+		redirect("/browse");
 	}
 
 	return (
