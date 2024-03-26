@@ -16,9 +16,13 @@ import prisma from "@/lib/prisma";
 import { HeartIcon } from "lucide-react";
 import Searchbar from "./Searchbar";
 
-export default async function BrowsePage({
+export async function RecipeBrowser({
+	title,
+	userId,
 	searchParams,
 }: {
+	title: string;
+	userId?: string;
 	searchParams: {
 		search?: string;
 		page?: string;
@@ -42,6 +46,7 @@ export default async function BrowsePage({
 							},
 						]
 					: undefined,
+				userId: userId,
 			},
 			skip: searchParams.page
 				? (Math.min(parseInt(searchParams.page), 1) - 1) * 20
@@ -53,7 +58,7 @@ export default async function BrowsePage({
 	return (
 		<section className="py-16 px-8 md:px-16 xl:px-32">
 			<div className="flex flex-wrap justify-between gap-4">
-				<h1 className="font-bold text-4xl">Recipes</h1>
+				<h1 className="font-bold text-4xl">{title ?? "Recipes"}</h1>
 				<Searchbar className="max-w-96" />
 			</div>
 			<div className="mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -88,4 +93,15 @@ export default async function BrowsePage({
 			</div>
 		</section>
 	);
+}
+
+export default async function BrowsePage({
+	searchParams,
+}: {
+	searchParams: {
+		search?: string;
+		page?: string;
+	};
+}) {
+	return <RecipeBrowser title="Recipes" searchParams={searchParams} />;
 }
