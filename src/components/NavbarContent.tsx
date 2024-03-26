@@ -22,6 +22,7 @@ import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 
 interface Props {
 	bordered?: boolean;
@@ -126,6 +127,7 @@ export default function NavbarContent({
 	session: _session,
 }: Props) {
 	const session: Session | undefined | null = JSON.parse(_session);
+	const pathname = usePathname();
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
@@ -136,6 +138,9 @@ export default function NavbarContent({
 			}
 		};
 	}, []);
+	useEffect(() => {
+		setOpen(false);
+	}, [pathname]);
 
 	return (
 		<div
