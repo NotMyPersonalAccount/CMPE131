@@ -14,12 +14,14 @@ export async function middleware(req: NextRequest) {
 		if (pathname.startsWith(unauthenticatedRoute)) return res;
 	}
 	const session = await getSession();
-	if (!session) return NextResponse.redirect("/api/auth/login", req);
+	if (!session)
+		return NextResponse.redirect(new URL("/api/auth/login", req.url), req);
 
 	for (const onboardNotRequiredRoute of onboardNotRequiredRoutes) {
 		if (pathname.startsWith(onboardNotRequiredRoute)) return res;
 	}
-	if (!session.data) return NextResponse.redirect("/onboard", req);
+	if (!session.data)
+		return NextResponse.redirect(new URL("/onboard", req.url), req);
 
 	return res;
 }

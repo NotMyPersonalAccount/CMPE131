@@ -99,7 +99,6 @@ export default function NavbarContent({
 	useEffect(() => {
 		const mql = window.matchMedia("(min-width: 640px)");
 		mql.onchange = (e) => {
-			console.log(e);
 			if (e.matches) {
 				setOpen(false);
 			}
