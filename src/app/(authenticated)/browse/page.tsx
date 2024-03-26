@@ -51,7 +51,7 @@ export default async function BrowsePage({
 	]);
 
 	return (
-		<section className="py-16 px-10 sm:px-36">
+		<section className="py-16 px-8 md:px-16 xl:px-32">
 			<div className="flex flex-wrap justify-between gap-4">
 				<h1 className="font-bold text-4xl">Recipes</h1>
 				<Searchbar className="max-w-96" />
