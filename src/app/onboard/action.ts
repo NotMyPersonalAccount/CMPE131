@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { getSession } from "@auth0/nextjs-auth0";
+import { getSession, updateSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { onboardFormSchema } from "./schema";
@@ -17,10 +17,19 @@ export async function createUser(values: z.infer<typeof onboardFormSchema>) {
 		throw new Error("Session not found");
 	}
 
-	await prisma.user.create({
+	const user = await prisma.user.create({
 		data: {
 			email: session.user.email,
 			name: values.name,
+		},
+	});
+
+	await updateSession({
+		...session,
+		data: {
+			id: user.id,
+			name: user.name,
+			email: user.email,
 		},
 	});
 
