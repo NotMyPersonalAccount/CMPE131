@@ -11,12 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createUser } from "./action";
 import { onboardFormSchema } from "./schema";
-
+import SubmitButton from "@/components/SubmitButton";
 
 async function onSubmit(values: z.infer<typeof onboardFormSchema>) {
 	await createUser(values);
@@ -51,12 +50,7 @@ export default function OnboardForm() {
 						);
 					}}
 				/>
-				<Button type="submit" disabled={form.formState.isSubmitting}>
-					{form.formState.isSubmitting && (
-						<ReloadIcon className="mr-2 animate-spin" />
-					)}
-					Submit
-				</Button>
+				<SubmitButton submitting={form.formState.isSubmitting} />
 			</form>
 		</Form>
 	);
