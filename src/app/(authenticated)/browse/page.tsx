@@ -15,12 +15,39 @@ import {
 import prisma from "@/lib/prisma";
 import { HeartIcon } from "lucide-react";
 
-export default async function BrowsePage() {
-	const recipes = await prisma.recipe.findMany({
-		include: {
-			user: true,
-		},
-	});
+export default async function BrowsePage({
+	searchParams,
+}: {
+	searchParams: {
+		search?: string;
+		page?: string;
+	};
+}) {
+	const [recipeCount, recipes] = await prisma.$transaction([
+		prisma.recipe.count(),
+		prisma.recipe.findMany({
+			include: {
+				user: true,
+			},
+			where: {
+				OR: searchParams.search
+					? [
+							{ title: { contains: searchParams.search, mode: "insensitive" } },
+							{
+								description: {
+									contains: searchParams.search,
+									mode: "insensitive",
+								},
+							},
+						]
+					: undefined,
+			},
+			skip: searchParams.page
+				? (Math.min(parseInt(searchParams.page), 1) - 1) * 20
+				: 0,
+			take: 20,
+		}),
+	]);
 
 	return (
 		<section className="py-16 px-10 sm:px-36">
