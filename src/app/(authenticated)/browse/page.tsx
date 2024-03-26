@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import prisma from "@/lib/prisma";
 import { HeartIcon } from "lucide-react";
+import Searchbar from "./Searchbar";
 
 export default async function BrowsePage({
 	searchParams,
@@ -53,6 +54,7 @@ export default async function BrowsePage({
 		<section className="py-16 px-10 sm:px-36">
 			<div className="flex flex-wrap justify-between gap-4">
 				<h1 className="font-bold text-4xl">Recipes</h1>
+				<Searchbar className="max-w-96" />
 			</div>
 			<div className="mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
 				{recipes.map((recipe) => {
