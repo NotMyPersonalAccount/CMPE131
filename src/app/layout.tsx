@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -20,7 +19,6 @@ export default function RootLayout({
 				<body
 					className={cn("min-h-screen bg-background font-inter antialiased")}
 				>
-					<Navbar />
 					{children}
 				</body>
 			</UserProvider>
