@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { getSession } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { onboardFormSchema } from "./OnboardForm";
+import { onboardFormSchema } from "./schema";
 
 export async function createUser(values: z.infer<typeof onboardFormSchema>) {
 	const { success } = onboardFormSchema.safeParse(values);

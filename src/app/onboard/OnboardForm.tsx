@@ -15,10 +15,8 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createUser } from "./action";
+import { onboardFormSchema } from "./schema";
 
-export const onboardFormSchema = z.object({
-	name: z.string().min(1),
-});
 
 async function onSubmit(values: z.infer<typeof onboardFormSchema>) {
 	await createUser(values);
