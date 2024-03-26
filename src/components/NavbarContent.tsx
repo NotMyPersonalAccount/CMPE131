@@ -20,12 +20,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 interface Props {
 	bordered?: boolean;
+	onboarded?: boolean;
 	session: string;
 }
 
 interface UserMenuProps {
 	className?: string;
 	session: Session | undefined | null;
+}
+
+interface NavbarLinksProps {
+	onboarded?: boolean;
 }
 
 function UserMenu({ className, session }: UserMenuProps) {
@@ -68,20 +73,26 @@ function UserMenu({ className, session }: UserMenuProps) {
 	);
 }
 
-function NavbarLinks() {
+function NavbarLinks({ onboarded }: NavbarLinksProps) {
 	return (
-		<>
-			<Link className="text-foreground/60" href="/browse">
-				Browse
-			</Link>
-			<Link className="text-foreground/60" href="/post">
-				Create
-			</Link>
-		</>
+		onboarded !== false && (
+			<>
+				<Link className="text-foreground/60" href="/browse">
+					Browse
+				</Link>
+				<Link className="text-foreground/60" href="/post">
+					Create
+				</Link>
+			</>
+		)
 	);
 }
 
-export default function NavbarContent({ bordered, session: _session }: Props) {
+export default function NavbarContent({
+	bordered,
+	onboarded,
+	session: _session,
+}: Props) {
 	const session: Session | undefined | null = JSON.parse(_session);
 	const [open, setOpen] = useState(false);
 
@@ -104,7 +115,11 @@ export default function NavbarContent({ bordered, session: _session }: Props) {
 			<div className="flex justify-between items-center gap-8">
 				<div className="flex justify-between items-center w-full">
 					<div className="flex justify-between items-center gap-3">
-						<div className="sm:hidden w-8 h-8 -mt-4 -ml-4">
+						<div
+							className={cn("sm:hidden w-8 h-8 -mt-4 -ml-4", {
+								hidden: onboarded === false,
+							})}
+						>
 							<Popover open={open} onOpenChange={(open) => setOpen(open)}>
 								<PopoverTrigger>
 									<Hamburger size={16} toggled={open} />
@@ -121,7 +136,7 @@ export default function NavbarContent({ bordered, session: _session }: Props) {
 					<UserMenu className="sm:hidden" session={session} />
 				</div>
 				<div className="hidden sm:flex gap-6">
-					<NavbarLinks />
+					<NavbarLinks onboarded={onboarded} />
 				</div>
 			</div>
 			<UserMenu className="hidden sm:block" session={session} />

@@ -3,6 +3,7 @@ import NavbarContent from "./NavbarContent";
 
 interface Props {
 	bordered?: boolean;
+	onboarded?: boolean;
 }
 
 export default async function Navbar(props: Props) {
