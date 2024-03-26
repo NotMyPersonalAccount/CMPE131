@@ -10,13 +10,18 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuPortal,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { useTheme } from "next-themes";
 
 interface Props {
 	bordered?: boolean;
@@ -34,6 +39,8 @@ interface NavbarLinksProps {
 }
 
 function UserMenu({ className, session }: UserMenuProps) {
+	const { theme, setTheme } = useTheme();
+
 	return (
 		<div className={className}>
 			{session ? (
@@ -57,6 +64,31 @@ function UserMenu({ className, session }: UserMenuProps) {
 							<DropdownMenuItem asChild>
 								<Link href="/settings">Settings</Link>
 							</DropdownMenuItem>
+							<DropdownMenuSub>
+								<DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+								<DropdownMenuPortal>
+									<DropdownMenuSubContent>
+										<DropdownMenuItem
+											disabled={theme === "light"}
+											onSelect={() => setTheme("light")}
+										>
+											Light
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											disabled={theme === "dark"}
+											onSelect={() => setTheme("dark")}
+										>
+											Dark
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											disabled={theme === "system"}
+											onSelect={() => setTheme("system")}
+										>
+											System
+										</DropdownMenuItem>
+									</DropdownMenuSubContent>
+								</DropdownMenuPortal>
+							</DropdownMenuSub>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem asChild>
