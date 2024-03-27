@@ -99,7 +99,7 @@ function UserMenu({ className, session }: UserMenuProps) {
 				</DropdownMenu>
 			) : (
 				<Button asChild>
-					<Link href="/api/auth/login">Login</Link>
+					<Link href="/api/auth/login?returnTo=/browse">Login</Link>
 				</Button>
 			)}
 		</div>

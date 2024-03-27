@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
 	}
 	const session = await getSession();
 	if (!session)
-		return NextResponse.redirect(new URL("/api/auth/login", req.url), req);
+		return NextResponse.redirect(new URL("/api/auth/login?returnTo=/browse", req.url), req);
 
 	for (const onboardNotRequiredRoute of onboardNotRequiredRoutes) {
 		if (pathname.startsWith(onboardNotRequiredRoute)) return res;
