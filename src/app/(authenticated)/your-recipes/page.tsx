@@ -1,6 +1,5 @@
 import { getSession } from "@auth0/nextjs-auth0";
-import { RecipeBrowser } from "../browse/page";
-
+import { RecipeBrowser } from "../browse/RecipeBrowser";
 export default async function YourRecipesPage({
 	searchParams,
 }: {
