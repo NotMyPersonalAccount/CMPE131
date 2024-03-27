@@ -72,7 +72,7 @@ async function RecipeBrowserContent({
 
 	return recipes.map((recipe) => {
 		return (
-			<Card key={recipe.id}>
+			<Card key={recipe.id} className="overflow-hidden">
 				<div className="w-full h-32 bg-gray-200"></div>
 				<CardHeader>
 					<CardTitle>{recipe.title}</CardTitle>
