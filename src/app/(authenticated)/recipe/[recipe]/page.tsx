@@ -15,6 +15,9 @@ export default async function RecipePage({
 		},
 		include: {
 			comments: {
+				where: {
+					parent: null
+				},
 				include: {
 					user: true,
 					children: {

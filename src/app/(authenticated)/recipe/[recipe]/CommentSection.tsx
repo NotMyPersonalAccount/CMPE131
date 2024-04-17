@@ -24,13 +24,18 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 dayjs.extend(relativeTime);
 
 type Comment = RecipeComment & { user: User };
 
-async function onSubmitComment(recipeId: string, comment: string) {
-	return await postComment(recipeId, comment);
+async function onSubmitComment(
+	recipeId: string,
+	parentId: string | null,
+	comment: string,
+) {
+	return await postComment(recipeId, parentId, comment);
 }
 
 export default function CommentSection({
@@ -40,42 +45,22 @@ export default function CommentSection({
 	recipe: Recipe;
 	initialComments: Comment[];
 }) {
-	const form = useForm<z.infer<typeof commentSchema>>({
-		resolver: zodResolver(commentSchema),
-		defaultValues: {
-			content: "",
-		},
-	});
 	const [comments, setComments] = useState(initialComments);
 
 	return (
 		<div className="flex flex-col gap-2 sm:gap-4">
-			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(async (values) => {
-						const newComment = await onSubmitComment(recipe.id, values.content);
-						setComments((comments) => [newComment, ...comments]);
-					})}
-					className="flex flex-col gap-2"
-				>
-					<FormField
-						control={form.control}
-						name="content"
-						render={({ field }) => {
-							return (
-								<FormItem>
-									<FormControl>
-										<Textarea {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							);
-						}}
-					/>
-					<SubmitButton submitting={form.formState.isSubmitting} />
-				</form>
-			</Form>
 			<div className="flex flex-col gap-2 sm:gap-4">
+				<CommentBox
+					onSubmit={async (values) => {
+						const newComment = await onSubmitComment(
+							recipe.id,
+							null,
+							values.content,
+						);
+						setComments((comments) => [newComment, ...comments]);
+					}}
+					showCancel={false}
+				/>
 				{comments.map((comment) => {
 					return <Comment key={comment.id} comment={comment} />;
 				})}
@@ -84,11 +69,59 @@ export default function CommentSection({
 	);
 }
 
-function Comment({ comment }: { comment: Comment }) {
+function CommentBox({
+	onSubmit,
+	onCancel,
+	showCancel,
+}: {
+	onSubmit: (values: z.infer<typeof commentSchema>) => void;
+	onCancel?: () => void;
+	showCancel: boolean;
+}) {
+	const form = useForm<z.infer<typeof commentSchema>>({
+		resolver: zodResolver(commentSchema),
+		defaultValues: {
+			content: "",
+		},
+	});
+
 	return (
-		<div className="flex gap-2" key={comment.id}>
+		<Form {...form}>
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="flex flex-col gap-2"
+			>
+				<FormField
+					control={form.control}
+					name="content"
+					render={({ field }) => {
+						return (
+							<FormItem>
+								<FormControl>
+									<Textarea {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						);
+					}}
+				/>
+				<div className="justify-end flex gap-2">
+					{showCancel && <Button onClick={() => onCancel?.()}>Cancel</Button>}
+					<SubmitButton submitting={form.formState.isSubmitting} />
+				</div>
+			</form>
+		</Form>
+	);
+}
+
+function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
+	const [replies, setReplies] = useState(comment.children ?? []);
+	const [replyBoxOpen, setReplyBoxOpen] = useState(false);
+
+	return (
+		<div className="flex gap-2 w-full" key={comment.id}>
 			<div className="bg-gray-200 w-12 h-12 rounded-full" />
-			<div className="flex flex-col gap-1">
+			<div className="flex flex-col gap-1 w-full">
 				<span>
 					{comment.user.name}
 					<CommentTimestamp
@@ -97,6 +130,34 @@ function Comment({ comment }: { comment: Comment }) {
 					/>
 				</span>
 				<span className="text-sm">{comment.content}</span>
+				{comment.parentId === null && (
+					<>
+						<span
+							className="text-blue-700 cursor-pointer"
+							onClick={() => setReplyBoxOpen(true)}
+						>
+							Reply
+						</span>
+						{replyBoxOpen && (
+							<CommentBox
+								onSubmit={async (values) => {
+									const newReply = await postComment(
+										comment.recipeId,
+										comment.id,
+										values.content,
+									);
+									setReplies([...replies, newReply]);
+									setReplyBoxOpen(false);
+								}}
+								onCancel={() => setReplyBoxOpen(false)}
+								showCancel={true}
+							/>
+						)}
+						{replies.map((reply) => {
+							return <Comment comment={reply}/>
+						})}
+					</>
+				)}
 			</div>
 		</div>
 	);

@@ -4,7 +4,11 @@ import prisma from "@/lib/prisma";
 import { getSession } from "@auth0/nextjs-auth0";
 import { commentSchema } from "./schema";
 
-export async function postComment(recipeId: string, comment: string) {
+export async function postComment(
+	recipeId: string,
+	parentId: string | null,
+	comment: string,
+) {
 	const session = await getSession();
 	if (!session) {
 		throw new Error("Session not found");
@@ -26,10 +30,17 @@ export async function postComment(recipeId: string, comment: string) {
 					id: session.data.id,
 				},
 			},
+			parent: parentId
+				? {
+						connect: {
+							id: parentId,
+						},
+					}
+				: undefined,
 			content: comment,
 		},
-        include: {
-            user: true
-        }
+		include: {
+			user: true,
+		},
 	});
 }
