@@ -8,17 +8,34 @@ generator client {
 }
 
 model User {
-    id      String   @id @default(auto()) @map("_id") @db.ObjectId
-    email   String   @unique
-    name    String
-    recipes Recipe[]
+    id            String          @id @default(auto()) @map("_id") @db.ObjectId
+    email         String          @unique
+    name          String
+    recipes       Recipe[]
+    recipeCommens RecipeComment[]
 }
 
 model Recipe {
-    id          String @id @default(auto()) @map("_id") @db.ObjectId
-    userId      String @db.ObjectId
-    user        User   @relation(fields: [userId], references: [id])
+    id          String          @id @default(auto()) @map("_id") @db.ObjectId
+    userId      String          @db.ObjectId
+    user        User            @relation(fields: [userId], references: [id])
     title       String
     description String
     content     String
+    comments    RecipeComment[]
+}
+
+model RecipeComment {
+    id       String @id @default(auto()) @map("_id") @db.ObjectId
+    recipeId String @db.ObjectId
+    recipe   Recipe @relation(fields: [recipeId], references: [id])
+    userId   String @db.ObjectId
+    user     User   @relation(fields: [userId], references: [id])
+
+    parentId String?         @db.ObjectId
+    parent   RecipeComment?  @relation("replies", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+    children RecipeComment[] @relation("replies")
+
+    timestamp DateTime @default(now())
+    content   String
 }

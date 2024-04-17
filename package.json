@@ -22,6 +22,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "dayjs": "^1.11.10",
     "hamburger-react": "^2.5.0",
     "lucide-react": "^0.363.0",
     "next": "14.1.4",

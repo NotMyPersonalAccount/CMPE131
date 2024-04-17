@@ -1,6 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import CommentSection from "./CommentSection";
+import { Separator } from "@/components/ui/separator";
 
 export default async function RecipePage({
 	params,
@@ -10,6 +12,23 @@ export default async function RecipePage({
 	const recipe = await prisma.recipe.findUnique({
 		where: {
 			id: params.recipe,
+		},
+		include: {
+			comments: {
+				include: {
+					user: true,
+					children: {
+						include: {
+							user: true
+						}
+					},
+				},
+				orderBy: [
+					{
+						timestamp: "desc",
+					},
+				],
+			},
 		},
 	});
 	if (!recipe) return notFound();
@@ -27,6 +46,11 @@ export default async function RecipePage({
 				<Card className="min-h-40">
 					<CardContent className="py-4">{recipe.content}</CardContent>
 				</Card>
+				<Separator className="my-8" />
+				<div>
+					<h1 className="font-bold text-lg">Comments</h1>
+					<CommentSection recipe={recipe} initialComments={recipe.comments} />
+				</div>
 			</section>
 		</>
 	);
