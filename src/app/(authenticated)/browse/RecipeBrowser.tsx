@@ -17,6 +17,7 @@ import { HeartIcon } from "lucide-react";
 import Searchbar from "./Searchbar";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 interface RecipeContentProps {
 	title: string;
@@ -73,9 +74,13 @@ export async function RecipeBrowserContent({
 	return recipes.map((recipe) => {
 		return (
 			<Card key={recipe.id} className="overflow-hidden">
-				<div className="w-full h-32 bg-gray-200"></div>
+				<Link href={"/recipe/" + recipe.id}>
+					<div className="w-full h-32 bg-gray-200"></div>
+				</Link>
 				<CardHeader>
-					<CardTitle>{recipe.title}</CardTitle>
+					<CardTitle>
+						<Link href={"/recipe/" + recipe.id}>{recipe.title}</Link>
+					</CardTitle>
 					<CardDescription>{recipe.description}</CardDescription>
 				</CardHeader>
 				<Separator />
