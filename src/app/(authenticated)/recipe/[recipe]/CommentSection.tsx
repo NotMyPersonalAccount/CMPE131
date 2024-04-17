@@ -154,7 +154,7 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 							/>
 						)}
 						{replies.map((reply) => {
-							return <Comment comment={reply}/>
+							return <Comment key={reply.id} comment={reply}/>
 						})}
 					</>
 				)}
