@@ -88,7 +88,10 @@ function CommentBox({
 	return (
 		<Form {...form}>
 			<form
-				onSubmit={form.handleSubmit(onSubmit)}
+				onSubmit={form.handleSubmit(async (values) => {
+					await onSubmit(values);
+					form.setValue("content", "");
+				})}
 				className="flex flex-col gap-2"
 			>
 				<FormField
@@ -154,7 +157,7 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 							/>
 						)}
 						{replies.map((reply) => {
-							return <Comment key={reply.id} comment={reply}/>
+							return <Comment key={reply.id} comment={reply} />;
 						})}
 					</>
 				)}
