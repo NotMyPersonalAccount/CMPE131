@@ -29,7 +29,11 @@ export default function BackButton() {
 		if (searchParams.has("showBack")) {
 			const newSearchParams = new URLSearchParams(searchParams.toString());
 			newSearchParams.delete("showBack");
-			router.replace(pathname + "?" + newSearchParams.toString());
+			history.replaceState(
+				null,
+				"",
+				`${pathname}?${newSearchParams.toString()}`,
+			);
 		}
 	}, [router, pathname, searchParams]);
 
@@ -41,7 +45,7 @@ export default function BackButton() {
 				>
 					<Button
 						className="ml-8 sm:ml-12 my-4 h-8 text-sm"
-                        variant="secondary"
+						variant="secondary"
 						onClick={() => router.back()}
 					>
 						<ChevronLeft /> Back
