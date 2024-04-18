@@ -75,7 +75,7 @@ function CommentBox({
 	onCancel,
 	showCancel,
 }: {
-	onSubmit: (values: z.infer<typeof commentSchema>) => void;
+	onSubmit?: (values: z.infer<typeof commentSchema>) => void;
 	onCancel?: () => void;
 	showCancel: boolean;
 }) {
@@ -90,7 +90,9 @@ function CommentBox({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(async (values) => {
-					await onSubmit(values);
+					if (onSubmit) {
+						await onSubmit(values);
+					}
 					form.setValue("content", "");
 				})}
 				className="flex flex-col gap-2"
