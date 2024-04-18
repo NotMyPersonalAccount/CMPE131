@@ -25,6 +25,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import clsx from "clsx";
 
 dayjs.extend(relativeTime);
 
@@ -122,13 +123,18 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 	const [replyBoxOpen, setReplyBoxOpen] = useState(false);
 
 	return (
-		<div className="flex gap-2 w-full" key={comment.id}>
-			<div className="bg-gray-200 w-12 h-12 rounded-full" />
-			<div className="flex flex-col gap-1 w-full">
+		<div className="flex gap-3 w-full" key={comment.id}>
+			<div
+				className={clsx("bg-gray-200 rounded-full", {
+					"w-12 h-12": comment.parentId === null,
+					"w-8 h-8": comment.parentId !== null,
+				})}
+			/>
+			<div className="flex flex-col gap-1 flex-grow">
 				<span>
 					{comment.user.name}
 					<CommentTimestamp
-						className="text-xs text-muted-foreground ml-1"
+						className="text-xs text-muted-foreground ml-2"
 						timestamp={comment.timestamp}
 					/>
 				</span>
@@ -156,9 +162,11 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 								showCancel={true}
 							/>
 						)}
-						{replies.map((reply) => {
-							return <Comment key={reply.id} comment={reply} />;
-						})}
+						<div className="flex flex-col gap-2 sm:gap-4 mt-2">
+							{replies.map((reply) => {
+								return <Comment key={reply.id} comment={reply} />;
+							})}
+						</div>
 					</>
 				)}
 			</div>
