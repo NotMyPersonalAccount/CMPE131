@@ -13,7 +13,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import prisma from "@/lib/prisma";
-import { HeartIcon } from "lucide-react";
+import { HeartIcon, MessageSquareTextIcon } from "lucide-react";
 import Searchbar from "./Searchbar";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -50,6 +50,9 @@ export async function RecipeBrowserContent({
 		prisma.recipe.findMany({
 			include: {
 				user: true,
+				_count: {
+					select: { comments: true },
+				},
 			},
 			where: {
 				OR: searchParams.search
@@ -98,9 +101,15 @@ export async function RecipeBrowserContent({
 				<Separator />
 				<CardFooter>
 					<div className="w-full mt-6 flex justify-between items-center">
-						<div className="flex gap-1">
-							0
-							<HeartIcon />
+						<div className="flex gap-2 sm:gap-4">
+							<div className="flex gap-1">
+								0
+								<HeartIcon />
+							</div>
+							<div className="flex gap-1">
+								{recipe._count.comments}
+								<MessageSquareTextIcon />
+							</div>
 						</div>
 						<TooltipProvider>
 							<Tooltip>
