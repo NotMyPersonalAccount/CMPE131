@@ -41,7 +41,7 @@ export default function BackButton() {
 		visible && (
 			<>
 				<div
-					className={clsx("w-full bg-background", { "fixed top-0": scrolled })}
+					className={clsx("w-full bg-background", { "fixed top-0 z-10": scrolled })}
 				>
 					<Button
 						className="ml-8 sm:ml-12 my-4 h-8 text-sm"
