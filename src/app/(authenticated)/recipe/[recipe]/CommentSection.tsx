@@ -40,10 +40,10 @@ async function onSubmitComment(
 }
 
 export default function CommentSection({
-	recipe,
+	recipeId,
 	initialComments,
 }: {
-	recipe: Recipe;
+	recipeId: string;
 	initialComments: Comment[];
 }) {
 	const [comments, setComments] = useState(initialComments);
@@ -53,7 +53,7 @@ export default function CommentSection({
 			<CommentBox
 				onSubmit={async (values) => {
 					const newComment = await onSubmitComment(
-						recipe.id,
+						recipeId,
 						null,
 						values.content,
 					);

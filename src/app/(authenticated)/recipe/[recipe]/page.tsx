@@ -36,17 +36,17 @@ export default async function RecipePage({
 				</Card>
 				<Separator className="my-8" />
 				<Suspense fallback={<CommentsSkeleton />}>
-					<Comments recipe={recipe} />
+					<Comments recipeId={params.recipe} />
 				</Suspense>
 			</section>
 		</>
 	);
 }
 
-async function Comments({ recipe }: { recipe: Recipe }) {
+async function Comments({ recipeId }: { recipeId: string }) {
 	const comments = await prisma.recipeComment.findMany({
 		where: {
-			recipeId: recipe.id,
+			recipeId,
 			parent: null,
 		},
 		include: {
@@ -67,7 +67,7 @@ async function Comments({ recipe }: { recipe: Recipe }) {
 	return (
 		<div>
 			<h1 className="font-bold text-lg">Comments</h1>
-			<CommentSection recipe={recipe} initialComments={comments} />
+			<CommentSection recipeId={recipeId} initialComments={comments} />
 		</div>
 	);
 }
