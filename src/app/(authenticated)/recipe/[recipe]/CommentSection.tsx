@@ -125,7 +125,7 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 	const [replyBoxOpen, setReplyBoxOpen] = useState(false);
 
 	return (
-		<div className="flex gap-3 w-full" key={comment.id}>
+		<div className="flex gap-3 w-full">
 			<div
 				className={clsx("bg-gray-200 rounded-full", {
 					"w-12 h-12": comment.parentId === null,
