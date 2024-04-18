@@ -18,6 +18,7 @@ import Searchbar from "./Searchbar";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import Image from "next/image";
 
 interface RecipeContentProps {
 	title: string;
@@ -34,7 +35,7 @@ export async function RecipeSkeletons() {
 		.map((_, i) => {
 			return (
 				<Card key={i}>
-					<Skeleton className="h-80" />
+					<Skeleton className="h-96" />
 				</Card>
 			);
 		});
@@ -75,7 +76,16 @@ export async function RecipeBrowserContent({
 		return (
 			<Card key={recipe.id} className="overflow-hidden">
 				<Link href={"/recipe/" + recipe.id + "?showBack"}>
-					<div className="w-full h-32 bg-gray-200"></div>
+					<div className="w-full h-48 bg-gray-200 relative">
+						{recipe.bannerUrl && (
+							<Image
+								src={recipe.bannerUrl}
+								alt={recipe.title}
+								layout="fill"
+								objectFit="cover"
+							/>
+						)}
+					</div>
 				</Link>
 				<CardHeader>
 					<CardTitle>

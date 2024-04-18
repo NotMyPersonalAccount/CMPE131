@@ -26,6 +26,7 @@ export async function createRecipe(values: z.infer<typeof createFormSchema>) {
 			title: values.title,
 			description: values.description,
 			content: values.content,
+			bannerUrl: values.bannerUrl,
 		},
 	});
 

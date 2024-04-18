@@ -90,6 +90,25 @@ export default function CreateForm() {
 						);
 					}}
 				/>
+				<FormField
+					control={form.control}
+					name="bannerUrl"
+					render={({ field }) => {
+						return (
+							<FormItem>
+								<FormLabel>Banner Image URL</FormLabel>
+								<FormControl>
+									<Input
+										className="w-full"
+										placeholder="Banner Image URL"
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						);
+					}}
+				/>
 				<SubmitButton submitting={form.formState.isSubmitting} />
 			</form>
 		</Form>

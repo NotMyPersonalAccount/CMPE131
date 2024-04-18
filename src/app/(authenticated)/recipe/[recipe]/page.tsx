@@ -7,6 +7,7 @@ import BackButton from "./BackButton";
 import { Suspense } from "react";
 import { LoaderIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 export default async function RecipePage({
 	params,
@@ -48,7 +49,16 @@ async function Recipe({ id }: { id: string }) {
 					{recipe.description}
 				</h2>
 			</div>
-			<div className="bg-gray-200 w-full h-40 sm:h-80 lg:h-96 rounded-md"></div>
+			<div className="bg-gray-200 w-full h-40 sm:h-80 lg:h-96 rounded-md overflow-hidden relative">
+				{recipe.bannerUrl && (
+					<Image
+						src={recipe.bannerUrl}
+						alt={recipe.title}
+						layout="fill"
+						objectFit="cover"
+					/>
+				)}
+			</div>
 			<Card className="min-h-40">
 				<CardContent className="py-4">{recipe.content}</CardContent>
 			</Card>

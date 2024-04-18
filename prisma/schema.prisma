@@ -23,6 +23,8 @@ model Recipe {
     description String
     content     String
     comments    RecipeComment[]
+
+    bannerUrl String?
 }
 
 model RecipeComment {
