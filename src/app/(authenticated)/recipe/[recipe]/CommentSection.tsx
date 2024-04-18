@@ -138,7 +138,11 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 						timestamp={comment.timestamp}
 					/>
 				</span>
-				<span className="text-sm">{comment.content}</span>
+				<div className="text-sm">
+					{comment.content.split("\n").map((line, i) => (
+						<p key={i}>{line}</p>
+					))}
+				</div>
 				{comment.parentId === null && (
 					<>
 						<span
