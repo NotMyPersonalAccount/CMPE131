@@ -13,6 +13,8 @@ model User {
     name          String
     recipes       Recipe[]
     recipeCommens RecipeComment[]
+
+    profileUrl String?
 }
 
 model Recipe {

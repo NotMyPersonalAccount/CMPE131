@@ -114,7 +114,16 @@ export async function RecipeBrowserContent({
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger>
-									<div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+									<div className="w-8 h-8 bg-gray-200 rounded-full overflow-hidden relative">
+										{recipe.user.profileUrl && (
+											<Image
+												src={recipe.user.profileUrl}
+												alt={recipe.user.name}
+												layout="fill"
+												objectFit="cover"
+											/>
+										)}
+									</div>
 								</TooltipTrigger>
 								<TooltipContent>{recipe.user.name}</TooltipContent>
 							</Tooltip>

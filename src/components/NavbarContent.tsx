@@ -50,7 +50,7 @@ function UserMenu({ className, session }: UserMenuProps) {
 						<Image
 							className="rounded-full"
 							alt="Profile Picture"
-							src={session.user.picture}
+							src={session.data.profileUrl}
 							width={32}
 							height={32}
 						/>

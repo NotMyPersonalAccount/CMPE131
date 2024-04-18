@@ -21,16 +21,13 @@ export async function createUser(values: z.infer<typeof onboardFormSchema>) {
 		data: {
 			email: session.user.email,
 			name: values.name,
+			profileUrl: session.user.picture, //TODO: Allow custom profile picture
 		},
 	});
 
 	await updateSession({
 		...session,
-		data: {
-			id: user.id,
-			name: user.name,
-			email: user.email,
-		},
+		data: user,
 	});
 
 	redirect("/browse");

@@ -25,11 +25,7 @@ export const GET = handleAuth({
 		}
 		await updateSession(req, res, {
 			...session,
-			data: {
-				id: user.id,
-				name: user.name,
-				email: user.email,
-			},
+			data: user
 		});
 		return res;
 	},

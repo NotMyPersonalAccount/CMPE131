@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
+import Image from "next/image";
 
 dayjs.extend(relativeTime);
 
@@ -125,11 +126,20 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 	return (
 		<div className="flex gap-3 w-full">
 			<div
-				className={clsx("bg-gray-200 rounded-full", {
+				className={clsx("bg-gray-200 rounded-full overflow-hidden relative", {
 					"w-12 h-12": comment.parentId === null,
 					"w-8 h-8": comment.parentId !== null,
 				})}
-			/>
+			>
+				{comment.user.profileUrl && (
+					<Image
+						src={comment.user.profileUrl}
+						alt={comment.user.name}
+						layout="fill"
+						objectFit="cover"
+					/>
+				)}
+			</div>
 			<div className="flex flex-col gap-1 flex-grow">
 				<span>
 					{comment.user.name}
