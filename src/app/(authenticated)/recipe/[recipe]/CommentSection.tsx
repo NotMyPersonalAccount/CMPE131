@@ -50,22 +50,20 @@ export default function CommentSection({
 
 	return (
 		<div className="flex flex-col gap-2 sm:gap-4">
-			<div className="flex flex-col gap-2 sm:gap-4">
-				<CommentBox
-					onSubmit={async (values) => {
-						const newComment = await onSubmitComment(
-							recipe.id,
-							null,
-							values.content,
-						);
-						setComments((comments) => [newComment, ...comments]);
-					}}
-					showCancel={false}
-				/>
-				{comments.map((comment) => {
-					return <Comment key={comment.id} comment={comment} />;
-				})}
-			</div>
+			<CommentBox
+				onSubmit={async (values) => {
+					const newComment = await onSubmitComment(
+						recipe.id,
+						null,
+						values.content,
+					);
+					setComments((comments) => [newComment, ...comments]);
+				}}
+				showCancel={false}
+			/>
+			{comments.map((comment) => {
+				return <Comment key={comment.id} comment={comment} />;
+			})}
 		</div>
 	);
 }
