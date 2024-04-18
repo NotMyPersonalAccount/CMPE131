@@ -144,7 +144,7 @@ export default function NavbarContent({
 
 	return (
 		<div
-			className={cn("px-8 sm:px-24 py-4 sm:flex justify-between items-center", {
+			className={cn("px-8 sm:px-12 py-4 sm:flex justify-between items-center", {
 				"border-b": bordered,
 			})}
 		>

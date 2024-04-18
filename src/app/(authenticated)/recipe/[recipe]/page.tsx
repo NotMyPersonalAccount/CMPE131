@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import CommentSection from "./CommentSection";
 import { Separator } from "@/components/ui/separator";
+import BackButton from "./BackButton";
 
 export default async function RecipePage({
 	params,
@@ -16,14 +17,14 @@ export default async function RecipePage({
 		include: {
 			comments: {
 				where: {
-					parent: null
+					parent: null,
 				},
 				include: {
 					user: true,
 					children: {
 						include: {
-							user: true
-						}
+							user: true,
+						},
 					},
 				},
 				orderBy: [
@@ -38,6 +39,7 @@ export default async function RecipePage({
 
 	return (
 		<>
+			<BackButton />
 			<section className="py-16 px-8 md:px-16 xl:px-32 flex flex-col gap-2 sm:gap-4">
 				<div>
 					<h1 className="text-2xl sm:text-4xl font-bold">{recipe.title}</h1>

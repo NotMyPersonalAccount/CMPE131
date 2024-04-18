@@ -74,12 +74,14 @@ export async function RecipeBrowserContent({
 	return recipes.map((recipe) => {
 		return (
 			<Card key={recipe.id} className="overflow-hidden">
-				<Link href={"/recipe/" + recipe.id}>
+				<Link href={"/recipe/" + recipe.id + "?showBack"}>
 					<div className="w-full h-32 bg-gray-200"></div>
 				</Link>
 				<CardHeader>
 					<CardTitle>
-						<Link href={"/recipe/" + recipe.id}>{recipe.title}</Link>
+						<Link href={"/recipe/" + recipe.id + "?showBack"}>
+							{recipe.title}
+						</Link>
 					</CardTitle>
 					<CardDescription>{recipe.description}</CardDescription>
 				</CardHeader>
