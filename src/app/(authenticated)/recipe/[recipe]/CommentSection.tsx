@@ -68,7 +68,7 @@ export default function CommentSection({
 	);
 }
 
-function CommentBox({
+export function CommentBox({
 	onSubmit,
 	onCancel,
 	showCancel,
