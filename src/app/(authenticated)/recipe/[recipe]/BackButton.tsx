@@ -5,25 +5,26 @@ import { Separator } from "@/components/ui/separator";
 import clsx from "clsx";
 import { ChevronLeft } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function BackButton() {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const router = useRouter();
 
+	const ref = useRef<HTMLDivElement>(null);
 	const [visible] = useState(searchParams.has("showBack"));
 	const [scrolled, setScrolled] = useState(false);
 
 	useEffect(() => {
 		if (visible) {
 			const onScroll = () => {
-				setScrolled(window.scrollY > 72);
+				setScrolled(window.scrollY > (ref.current?.offsetTop || 73));
 			};
 			window.addEventListener("scroll", onScroll);
 			return () => window.removeEventListener("scroll", onScroll);
 		}
-	}, [visible]);
+	}, [ref, visible]);
 
 	useEffect(() => {
 		if (searchParams.has("showBack")) {
@@ -41,7 +42,10 @@ export default function BackButton() {
 		visible && (
 			<>
 				<div
-					className={clsx("w-full bg-background", { "fixed top-0 z-10": scrolled })}
+					className={clsx("w-full bg-background", {
+						"fixed top-0 z-10": scrolled,
+					})}
+					ref={ref}
 				>
 					<Button
 						className="ml-8 sm:ml-12 my-4 h-8 text-sm"
