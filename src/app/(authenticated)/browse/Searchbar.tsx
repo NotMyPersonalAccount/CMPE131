@@ -1,6 +1,8 @@
 "use client";
 
 import { Input, InputProps } from "@/components/ui/input";
+import clsx from "clsx";
+import { SearchIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
@@ -23,13 +25,15 @@ export default function Searchbar(props: InputProps) {
 	}, [searchValue, searchParams, router, pathname]);
 
 	return (
-		<>
+		<div className="relative">
+			<SearchIcon className="text-muted-foreground w-4 h-4 absolute left-2.5 top-2.5" />
 			<Input
 				placeholder="Search"
 				{...props}
+				className={clsx("pl-8", props.className)}
 				value={search}
 				onChange={(e) => setSearch(e.target.value)}
 			/>
-		</>
+		</div>
 	);
 }
