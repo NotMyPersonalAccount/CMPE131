@@ -9,12 +9,12 @@ export default async function YourRecipesPage({
 	};
 }) {
 	const session = (await getSession())!;
-    
+
 	return (
 		<RecipeBrowser
 			title="Your Recipes"
 			searchParams={searchParams}
-			userId={session.data.id}
+			where={{ userId: session.data.id }}
 		/>
 	);
 }

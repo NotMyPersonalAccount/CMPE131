@@ -20,10 +20,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import Image from "next/image";
 import { getSession } from "@auth0/nextjs-auth0";
+import { Prisma } from "@prisma/client";
 
 interface RecipeContentProps {
 	title: string;
-	userId?: string;
+	where?: Prisma.RecipeFindManyArgs["where"];
 	searchParams: {
 		search?: string;
 		page?: string;
@@ -43,7 +44,7 @@ export async function RecipeSkeletons() {
 }
 
 export async function RecipeBrowserContent({
-	userId,
+	where,
 	searchParams,
 }: RecipeContentProps) {
 	const session = (await getSession())!;
@@ -73,7 +74,7 @@ export async function RecipeBrowserContent({
 							},
 						]
 					: undefined,
-				userId: userId,
+				...where,
 			},
 			skip: searchParams.page
 				? (Math.min(parseInt(searchParams.page), 1) - 1) * 20
