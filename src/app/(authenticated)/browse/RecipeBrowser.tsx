@@ -89,10 +89,10 @@ export async function RecipeBrowserContent({
 					<div className="w-full h-48 bg-gray-200 relative">
 						{recipe.bannerUrl && (
 							<Image
+								className="object-cover"
+								fill={true}
 								src={recipe.bannerUrl}
 								alt={recipe.title}
-								layout="fill"
-								objectFit="cover"
 							/>
 						)}
 					</div>
@@ -127,10 +127,10 @@ export async function RecipeBrowserContent({
 									<div className="w-8 h-8 bg-gray-200 rounded-full overflow-hidden relative">
 										{recipe.user.profileUrl && (
 											<Image
+												className="object-cover"
+												fill={true}
 												src={recipe.user.profileUrl}
 												alt={recipe.user.name}
-												layout="fill"
-												objectFit="cover"
 											/>
 										)}
 									</div>

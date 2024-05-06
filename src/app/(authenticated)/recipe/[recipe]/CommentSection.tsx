@@ -133,10 +133,10 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 			>
 				{comment.user.profileUrl && (
 					<Image
+						className="object-cover"
+						fill={true}
 						src={comment.user.profileUrl}
 						alt={comment.user.name}
-						layout="fill"
-						objectFit="cover"
 					/>
 				)}
 			</div>

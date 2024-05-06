@@ -76,10 +76,10 @@ async function Recipe({ id }: { id: string }) {
 			<div className="bg-gray-200 w-full h-40 sm:h-80 lg:h-96 rounded-md overflow-hidden relative">
 				{recipe.bannerUrl && (
 					<Image
+						className="object-cover"
+						fill={true}
 						src={recipe.bannerUrl}
 						alt={recipe.title}
-						layout="fill"
-						objectFit="cover"
 					/>
 				)}
 			</div>
