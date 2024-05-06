@@ -8,6 +8,8 @@ import { Suspense } from "react";
 import { LoaderIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
+import LikeButton from "./LikeButton";
+import { getSession } from "@auth0/nextjs-auth0";
 
 export default async function RecipePage({
 	params,
@@ -31,13 +33,35 @@ export default async function RecipePage({
 }
 
 async function Recipe({ id }: { id: string }) {
-	const recipe = await prisma.recipe
-		.findUnique({
+	const session = (await getSession())!;
+	const [recipe, likes, dislikes] = await Promise.all([
+		await prisma.recipe
+			.findUnique({
+				where: {
+					id,
+				},
+				include: {
+					likes: {
+						where: {
+							userId: session.data.id,
+						},
+					},
+				},
+			})
+			.catch(() => null),
+		await prisma.recipeLike.count({
 			where: {
-				id,
+				recipeId: id,
+				liked: true,
 			},
-		})
-		.catch(() => null);
+		}),
+		await prisma.recipeLike.count({
+			where: {
+				recipeId: id,
+				liked: false,
+			},
+		}),
+	]);
 
 	if (!recipe) return notFound();
 
@@ -62,6 +86,15 @@ async function Recipe({ id }: { id: string }) {
 			<Card className="min-h-40">
 				<CardContent className="py-4">{recipe.content}</CardContent>
 			</Card>
+			<div className="flex justify-end">
+				<LikeButton
+					recipeId={recipe.id}
+					likedBefore={recipe.likes.length > 0}
+					liked={recipe.likes[0]?.liked ?? false}
+					likes={likes}
+					dislikes={dislikes}
+				/>
+			</div>
 		</>
 	);
 }

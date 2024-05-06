@@ -8,11 +8,12 @@ generator client {
 }
 
 model User {
-    id            String          @id @default(auto()) @map("_id") @db.ObjectId
-    email         String          @unique
-    name          String
-    recipes       Recipe[]
-    recipeCommens RecipeComment[]
+    id             String          @id @default(auto()) @map("_id") @db.ObjectId
+    email          String          @unique
+    name           String
+    recipes        Recipe[]
+    recipeComments RecipeComment[]
+    recipeLikes    RecipeLike[]
 
     profileUrl String?
 }
@@ -25,8 +26,22 @@ model Recipe {
     description String
     content     String
     comments    RecipeComment[]
+    likes       RecipeLike[]
+    likeScore   Int             @default(0)
 
     bannerUrl String?
+}
+
+model RecipeLike {
+    id       String @id @default(auto()) @map("_id") @db.ObjectId
+    recipeId String @db.ObjectId
+    recipe   Recipe @relation(fields: [recipeId], references: [id])
+    userId   String @db.ObjectId
+    user     User   @relation(fields: [userId], references: [id])
+
+    liked Boolean
+
+    @@unique(name: "userAndRecipe", [recipeId, userId])
 }
 
 model RecipeComment {

@@ -44,3 +44,101 @@ export async function postComment(
 		},
 	});
 }
+
+export async function likeRecipe(recipeId: string, liked: boolean) {
+	const session = await getSession();
+	if (!session) {
+		throw new Error("Session not found");
+	}
+
+	return await prisma.$transaction(async (tx) => {
+		const existingLike = await prisma.recipeLike.findUnique({
+			where: {
+				userAndRecipe: {
+					userId: session.data.id,
+					recipeId,
+				},
+			},
+		});
+
+		if (!existingLike) {
+			await tx.recipeLike.create({
+				data: {
+					recipe: {
+						connect: {
+							id: recipeId,
+						},
+					},
+					user: {
+						connect: {
+							id: session.data.id,
+						},
+					},
+					liked,
+				},
+			});
+		} else if (existingLike.liked !== liked) {
+			await tx.recipeLike.update({
+				where: {
+					id: existingLike.id,
+				},
+				data: {
+					liked,
+				},
+			});
+		} else {
+			return false;
+		}
+
+		await tx.recipe.update({
+			where: {
+				id: recipeId,
+			},
+			data: {
+				likeScore: {
+					increment: (liked ? 1 : -1) * (existingLike ? 2 : 1),
+				},
+			},
+		});
+		return true;
+	});
+}
+
+export async function removeLike(recipeId: string) {
+	const session = await getSession();
+	if (!session) {
+		throw new Error("Session not found");
+	}
+
+	return await prisma.$transaction(async (tx) => {
+		const existingLike = await prisma.recipeLike.findUnique({
+			where: {
+				userAndRecipe: {
+					userId: session.data.id,
+					recipeId,
+				},
+			},
+		});
+
+		if (!existingLike) {
+			return false;
+		}
+
+		await tx.recipeLike.delete({
+			where: {
+				id: existingLike.id,
+			},
+		});
+		await tx.recipe.update({
+			where: {
+				id: recipeId,
+			},
+			data: {
+				likeScore: {
+					decrement: existingLike.liked ? 1 : -1,
+				},
+			},
+		});
+		return true;
+	});
+}

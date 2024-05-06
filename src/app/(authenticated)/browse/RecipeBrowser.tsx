@@ -19,6 +19,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import Image from "next/image";
+import { getSession } from "@auth0/nextjs-auth0";
 
 interface RecipeContentProps {
 	title: string;
@@ -45,11 +46,17 @@ export async function RecipeBrowserContent({
 	userId,
 	searchParams,
 }: RecipeContentProps) {
+	const session = (await getSession())!;
 	const [recipeCount, recipes] = await prisma.$transaction([
 		prisma.recipe.count(),
 		prisma.recipe.findMany({
 			include: {
 				user: true,
+				likes: {
+					where: {
+						userId: session.data.id,
+					},
+				},
 				_count: {
 					select: { comments: true },
 				},
@@ -103,8 +110,11 @@ export async function RecipeBrowserContent({
 					<div className="w-full mt-6 flex justify-between items-center">
 						<div className="flex gap-2 sm:gap-4">
 							<div className="flex gap-1">
-								0
-								<HeartIcon />
+								{recipe.likeScore}
+								<HeartIcon
+									fill={recipe.likes.length > 0 ? "red" : "none"}
+									color={recipe.likes.length > 0 ? "red" : "currentColor"}
+								/>
 							</div>
 							<div className="flex gap-1">
 								{recipe._count.comments}
