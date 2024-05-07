@@ -295,13 +295,15 @@ function Comment({
 								>
 									Copy
 								</DropdownMenuItem>
-								<DropdownMenuItem
-									onSelect={() => {
-										setEditing(true);
-									}}
-								>
-									Edit
-								</DropdownMenuItem>
+								{comment.userId === userId && (
+									<DropdownMenuItem
+										onSelect={() => {
+											setEditing(true);
+										}}
+									>
+										Edit
+									</DropdownMenuItem>
+								)}
 								{comment.userId === userId && (
 									<AlertDialogTrigger asChild>
 										<DropdownMenuItem>Delete</DropdownMenuItem>
