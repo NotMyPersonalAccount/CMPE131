@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { getSession } from "@auth0/nextjs-auth0";
 import { commentSchema } from "./schema";
+import { revalidatePath } from "next/cache";
 
 export async function postComment(
 	recipeId: string,
@@ -43,6 +44,22 @@ export async function postComment(
 			user: true,
 		},
 	});
+}
+
+export async function deleteComment(commentId: string) {
+	const session = await getSession();
+	if (!session) {
+		throw new Error("Session not found");
+	}
+
+	const recipe = await prisma.recipeComment.delete({
+		where: {
+			id: commentId,
+			userId: session.data.id,
+		},
+	});
+	revalidatePath("/recipe/" + recipe.id);
+	return true;
 }
 
 export async function likeRecipe(recipeId: string, liked: boolean) {

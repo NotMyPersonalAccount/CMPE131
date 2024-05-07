@@ -134,6 +134,7 @@ function RecipeSkeleton() {
 }
 
 async function Comments({ recipeId }: { recipeId: string }) {
+	const session = (await getSession())!;
 	const comments = await prisma.recipeComment.findMany({
 		where: {
 			recipeId,
@@ -157,7 +158,11 @@ async function Comments({ recipeId }: { recipeId: string }) {
 	return (
 		<div>
 			<h1 className="font-bold text-lg">Comments</h1>
-			<CommentSection recipeId={recipeId} initialComments={comments} />
+			<CommentSection
+				recipeId={recipeId}
+				userId={session.data.id}
+				initialComments={comments}
+			/>
 		</div>
 	);
 }

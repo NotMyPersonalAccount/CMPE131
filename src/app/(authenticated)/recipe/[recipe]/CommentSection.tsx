@@ -4,7 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Recipe, RecipeComment, User } from "@prisma/client";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useEffect, useState } from "react";
+import {
+	startTransition,
+	useEffect,
+	useOptimistic,
+	useState,
+	useTransition,
+} from "react";
 import { useForm } from "react-hook-form";
 import { commentSchema } from "./schema";
 import { z } from "zod";
@@ -17,7 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import SubmitButton from "@/components/SubmitButton";
-import { postComment } from "./action";
+import { deleteComment, postComment } from "./action";
 import {
 	Tooltip,
 	TooltipContent,
@@ -34,6 +40,17 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+	AlertDialog,
+	AlertDialogTrigger,
+	AlertDialogContent,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogDescription,
+	AlertDialogCancel,
+	AlertDialogAction,
+	AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
 
 dayjs.extend(relativeTime);
 
@@ -49,12 +66,24 @@ async function onSubmitComment(
 
 export default function CommentSection({
 	recipeId,
+	userId,
 	initialComments,
 }: {
 	recipeId: string;
+	userId: string;
 	initialComments: Comment[];
 }) {
-	const [comments, setComments] = useState(initialComments);
+	const [comments, setComments] = useOptimistic(
+		initialComments,
+		(comments, [action, data]: ["add", Comment] | ["delete", string]) => {
+			switch (action) {
+				case "add":
+					return [data, ...comments];
+				case "delete":
+					return comments.filter((c) => c.id !== data);
+			}
+		},
+	);
 
 	return (
 		<div className="flex flex-col gap-2 sm:gap-4">
@@ -65,12 +94,21 @@ export default function CommentSection({
 						null,
 						values.content,
 					);
-					setComments((comments) => [newComment, ...comments]);
+					startTransition(() => {
+						setComments(["add", newComment]);
+					});
 				}}
 				showCancel={false}
 			/>
 			{comments.map((comment) => {
-				return <Comment key={comment.id} comment={comment} />;
+				return (
+					<Comment
+						key={comment.id}
+						userId={userId}
+						comment={comment}
+						onDelete={() => setComments(["delete", comment.id])}
+					/>
+				);
 			})}
 		</div>
 	);
@@ -126,10 +164,30 @@ export function CommentBox({
 	);
 }
 
-function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
+function Comment({
+	userId,
+	comment,
+	onDelete,
+}: {
+	userId: string;
+	comment: Comment & { children?: Comment[] };
+	onDelete: () => void;
+}) {
+	const [isPending, startTransition] = useTransition();
+
 	const [showActions, setShowActions] = useState(false);
 	const [actionsOpen, setActionsOpen] = useState(false);
-	const [replies, setReplies] = useState(comment.children ?? []);
+	const [replies, setReplies] = useOptimistic(
+		comment.children ?? [],
+		(replies, [action, data]: ["add", Comment] | ["delete", string]) => {
+			switch (action) {
+				case "add":
+					return [data, ...replies];
+				case "delete":
+					return replies.filter((r) => r.id !== data);
+			}
+		},
+	);
 	const [replyBoxOpen, setReplyBoxOpen] = useState(false);
 
 	return (
@@ -179,28 +237,57 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 					)}
 				</div>
 				<div className="w-10">
-					<DropdownMenu onOpenChange={setActionsOpen}>
-						<DropdownMenuTrigger
-							className={clsx(
-								"p-2 outline-none focus:bg-secondary rounded-full",
-								{
-									invisible: !(showActions || actionsOpen),
-									visible: showActions || actionsOpen,
-								},
-							)}
-						>
-							<EllipsisVerticalIcon />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							<DropdownMenuItem
-								onSelect={async () => {
-									await navigator.clipboard.writeText(comment.content);
-								}}
+					<AlertDialog>
+						<DropdownMenu onOpenChange={setActionsOpen}>
+							<DropdownMenuTrigger
+								className={clsx(
+									"p-2 outline-none focus:bg-secondary rounded-full",
+									{
+										invisible: !(showActions || actionsOpen),
+										visible: showActions || actionsOpen,
+									},
+								)}
 							>
-								Copy
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+								<EllipsisVerticalIcon />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DropdownMenuItem
+									onSelect={async () => {
+										await navigator.clipboard.writeText(comment.content);
+									}}
+								>
+									Copy
+								</DropdownMenuItem>
+								{comment.userId === userId && (
+									<AlertDialogTrigger asChild>
+										<DropdownMenuItem>Delete</DropdownMenuItem>
+									</AlertDialogTrigger>
+								)}
+							</DropdownMenuContent>
+						</DropdownMenu>
+						<AlertDialogContent>
+							<AlertDialogHeader>
+								<AlertDialogTitle>Delete comment?</AlertDialogTitle>
+								<AlertDialogDescription>
+									This cannot be undone. This will permanently delete your
+									comment.
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel>Cancel</AlertDialogCancel>
+								<AlertDialogAction
+									onClick={async () => {
+										startTransition(() => {
+											onDelete();
+										});
+										await deleteComment(comment.id);
+									}}
+								>
+									Delete
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
 				</div>
 			</div>
 			{comment.parentId === null && (
@@ -213,7 +300,9 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 									comment.id,
 									values.content,
 								);
-								setReplies([...replies, newReply]);
+								startTransition(() => {
+									setReplies(["add", newReply]);
+								});
 								setReplyBoxOpen(false);
 							}}
 							onCancel={() => setReplyBoxOpen(false)}
@@ -222,7 +311,16 @@ function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
 					)}
 					<div className="flex flex-col gap-2 sm:gap-4">
 						{replies.map((reply) => {
-							return <Comment key={reply.id} comment={reply} />;
+							return (
+								<Comment
+									key={reply.id}
+									userId={userId}
+									comment={reply}
+									onDelete={() => {
+										setReplies(["delete", reply.id]);
+									}}
+								/>
+							);
 						})}
 					</div>
 				</div>
