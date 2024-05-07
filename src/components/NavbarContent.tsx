@@ -47,13 +47,17 @@ function UserMenu({ className, session }: UserMenuProps) {
 			{session ? (
 				<DropdownMenu>
 					<DropdownMenuTrigger>
-						<Image
-							className="rounded-full"
-							alt="Profile Picture"
-							src={session.data.profileUrl}
-							width={32}
-							height={32}
-						/>
+						{session.data?.profileUrl || session.user.picture ? (
+							<Image
+								className="rounded-full"
+								alt="Profile Picture"
+								src={session.data?.profileUrl || session.user.picture}
+								width={32}
+								height={32}
+							/>
+						) : (
+							<div className="w-8 h-8 bg-gray-200 rounded-full" />
+						)}
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
 						<DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
