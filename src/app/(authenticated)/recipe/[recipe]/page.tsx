@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import LikeButton from "./LikeButton";
 import { getSession } from "@auth0/nextjs-auth0";
+import BookmarkButton from "../../browse/BookmarkButton";
+import { Button } from "@/components/ui/button";
 
 export default async function RecipePage({
 	params,
@@ -42,6 +44,11 @@ async function Recipe({ id }: { id: string }) {
 				},
 				include: {
 					likes: {
+						where: {
+							userId: session.data.id,
+						},
+					},
+					bookmarks: {
 						where: {
 							userId: session.data.id,
 						},
@@ -86,7 +93,7 @@ async function Recipe({ id }: { id: string }) {
 			<Card className="min-h-40">
 				<CardContent className="py-4">{recipe.content}</CardContent>
 			</Card>
-			<div className="flex justify-end">
+			<div className="flex gap-2 justify-end">
 				<LikeButton
 					recipeId={recipe.id}
 					likedBefore={recipe.likes.length > 0}
@@ -94,6 +101,12 @@ async function Recipe({ id }: { id: string }) {
 					likes={likes}
 					dislikes={dislikes}
 				/>
+				<Button variant="secondary" className="w-14" asChild>
+					<BookmarkButton
+						recipeId={recipe.id}
+						bookmarked={recipe.bookmarks.length > 0}
+					/>
+				</Button>
 			</div>
 		</>
 	);

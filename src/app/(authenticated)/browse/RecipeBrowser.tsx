@@ -21,6 +21,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSession } from "@auth0/nextjs-auth0";
 import { Prisma } from "@prisma/client";
+import BookmarkButton from "./BookmarkButton";
 
 interface RecipeContentProps {
 	title: string;
@@ -54,6 +55,11 @@ export async function RecipeBrowserContent({
 			include: {
 				user: true,
 				likes: {
+					where: {
+						userId: session.data.id,
+					},
+				},
+				bookmarks: {
 					where: {
 						userId: session.data.id,
 					},
@@ -121,6 +127,10 @@ export async function RecipeBrowserContent({
 								{recipe._count.comments}
 								<MessageSquareTextIcon />
 							</div>
+							<BookmarkButton
+								recipeId={recipe.id}
+								bookmarked={recipe.bookmarks.length > 0}
+							/>
 						</div>
 						<TooltipProvider>
 							<Tooltip>

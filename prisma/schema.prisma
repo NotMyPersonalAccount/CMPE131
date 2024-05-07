@@ -15,6 +15,8 @@ model User {
     recipeComments RecipeComment[]
     recipeLikes    RecipeLike[]
 
+    bookmarks RecipeBookmark[]
+
     profileUrl String?
 }
 
@@ -29,6 +31,8 @@ model Recipe {
     likes       RecipeLike[]
     likeScore   Int             @default(0)
 
+    bookmarks RecipeBookmark[]
+
     bannerUrl String?
 }
 
@@ -40,6 +44,16 @@ model RecipeLike {
     user     User   @relation(fields: [userId], references: [id])
 
     liked Boolean
+
+    @@unique(name: "userAndRecipe", [recipeId, userId])
+}
+
+model RecipeBookmark {
+    id       String @id @default(auto()) @map("_id") @db.ObjectId
+    recipeId String @db.ObjectId
+    recipe   Recipe @relation(fields: [recipeId], references: [id])
+    userId   String @db.ObjectId
+    user     User   @relation(fields: [userId], references: [id])
 
     @@unique(name: "userAndRecipe", [recipeId, userId])
 }

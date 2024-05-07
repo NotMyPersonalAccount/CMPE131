@@ -63,6 +63,9 @@ function UserMenu({ className, session }: UserMenuProps) {
 								<Link href="/your-recipes">Your Recipes</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
+								<Link href="/bookmarks">Your Bookmarks</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
 								<Link href="/settings">Settings</Link>
 							</DropdownMenuItem>
 							<DropdownMenuSub>
