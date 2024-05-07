@@ -121,7 +121,6 @@ export async function RecipeBrowserContent({
 					<div className="w-full mt-6 flex justify-between items-center">
 						<div className="flex gap-2 sm:gap-4">
 							<div className="flex gap-1">
-								{recipe.likeScore}
 								{recipe.likes.length > 0 ? (
 									recipe.likes[0].liked ? (
 										<ThumbsUpIcon fill="currentColor" />
@@ -131,10 +130,11 @@ export async function RecipeBrowserContent({
 								) : (
 									<ThumbsUpIcon />
 								)}
+								{recipe.likeScore}
 							</div>
 							<div className="flex gap-1">
-								{recipe._count.comments}
 								<MessageSquareTextIcon />
+								{recipe._count.comments}
 							</div>
 							<BookmarkButton
 								recipeId={recipe.id}
