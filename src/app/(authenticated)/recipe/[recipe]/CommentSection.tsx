@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import SubmitButton from "@/components/SubmitButton";
-import { deleteComment, postComment } from "./action";
+import { deleteComment, editComment, postComment } from "./action";
 import {
 	Tooltip,
 	TooltipContent,
@@ -88,6 +88,7 @@ export default function CommentSection({
 	return (
 		<div className="flex flex-col gap-2 sm:gap-4">
 			<CommentBox
+				submitText="Post"
 				onSubmit={async (values) => {
 					const newComment = await onSubmitComment(
 						recipeId,
@@ -186,8 +187,17 @@ function Comment({
 }) {
 	const [isPending, startTransition] = useTransition();
 
+	const [editing, setEditing] = useState(false);
+	const [content, setContent] = useOptimistic(
+		comment.content,
+		(_, content: string) => {
+			return content;
+		},
+	);
+
 	const [showActions, setShowActions] = useState(false);
 	const [actionsOpen, setActionsOpen] = useState(false);
+
 	const [replies, setReplies] = useOptimistic(
 		comment.children ?? [],
 		(replies, [action, data]: ["add", Comment] | ["delete", string]) => {
@@ -231,11 +241,27 @@ function Comment({
 							timestamp={comment.timestamp}
 						/>
 					</span>
-					<div className="text-sm">
-						{comment.content.split("\n").map((line, i) => (
-							<p key={i}>{line}</p>
-						))}
-					</div>
+					{editing ? (
+						<CommentBox
+							submitText="Edit"
+							value={content}
+							showCancel={true}
+							onSubmit={async ({ content }) => {
+								startTransition(() => {
+									setContent(content);
+									setEditing(false);
+								});
+								await editComment(comment.id, content);
+							}}
+							onCancel={() => setEditing(false)}
+						/>
+					) : (
+						<div className="text-sm">
+							{content.split("\n").map((line, i) => (
+								<p key={i}>{line}</p>
+							))}
+						</div>
+					)}
 					{comment.parentId === null && (
 						<>
 							<span
@@ -264,10 +290,17 @@ function Comment({
 							<DropdownMenuContent>
 								<DropdownMenuItem
 									onSelect={async () => {
-										await navigator.clipboard.writeText(comment.content);
+										await navigator.clipboard.writeText(content);
 									}}
 								>
 									Copy
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onSelect={() => {
+										setEditing(true);
+									}}
+								>
+									Edit
 								</DropdownMenuItem>
 								{comment.userId === userId && (
 									<AlertDialogTrigger asChild>
@@ -305,6 +338,7 @@ function Comment({
 				<div className="flex flex-col gap-2 mt-2 ml-16">
 					{replyBoxOpen && (
 						<CommentBox
+							submitText="Reply"
 							onSubmit={async (values) => {
 								const newReply = await postComment(
 									comment.recipeId,

@@ -46,6 +46,25 @@ export async function postComment(
 	});
 }
 
+export async function editComment(commentId: string, content: string) {
+	const session = await getSession();
+	if (!session) {
+		throw new Error("Session not found");
+	}
+
+	const recipe = await prisma.recipeComment.update({
+		where: {
+			id: commentId,
+			userId: session.data.id,
+		},
+		data: {
+			content,
+		},
+	});
+	revalidatePath("/recipe/" + recipe.id);
+	return true;
+}
+
 export async function deleteComment(commentId: string) {
 	const session = await getSession();
 	if (!session) {
