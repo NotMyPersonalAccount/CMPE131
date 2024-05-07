@@ -27,6 +27,13 @@ import {
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import Image from "next/image";
+import { EllipsisVerticalIcon } from "lucide-react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 dayjs.extend(relativeTime);
 
@@ -120,70 +127,106 @@ export function CommentBox({
 }
 
 function Comment({ comment }: { comment: Comment & { children?: Comment[] } }) {
+	const [showActions, setShowActions] = useState(false);
+	const [actionsOpen, setActionsOpen] = useState(false);
 	const [replies, setReplies] = useState(comment.children ?? []);
 	const [replyBoxOpen, setReplyBoxOpen] = useState(false);
 
 	return (
-		<div className="flex gap-3 w-full">
+		<div>
 			<div
-				className={clsx("bg-gray-200 rounded-full overflow-hidden relative", {
-					"w-12 h-12": comment.parentId === null,
-					"w-8 h-8": comment.parentId !== null,
-				})}
+				className="flex gap-3 w-full"
+				onMouseEnter={() => setShowActions(true)}
+				onMouseLeave={() => setShowActions(false)}
 			>
-				{comment.user.profileUrl && (
-					<Image
-						className="object-cover"
-						fill={true}
-						src={comment.user.profileUrl}
-						alt={comment.user.name}
-					/>
-				)}
-			</div>
-			<div className="flex flex-col gap-1 flex-grow">
-				<span>
-					{comment.user.name}
-					<CommentTimestamp
-						className="text-xs text-muted-foreground ml-2"
-						timestamp={comment.timestamp}
-					/>
-				</span>
-				<div className="text-sm">
-					{comment.content.split("\n").map((line, i) => (
-						<p key={i}>{line}</p>
-					))}
+				<div
+					className={clsx("bg-gray-200 rounded-full overflow-hidden relative", {
+						"w-12 h-12": comment.parentId === null,
+						"w-8 h-8": comment.parentId !== null,
+					})}
+				>
+					{comment.user.profileUrl && (
+						<Image
+							className="object-cover"
+							fill={true}
+							src={comment.user.profileUrl}
+							alt={comment.user.name}
+						/>
+					)}
 				</div>
-				{comment.parentId === null && (
-					<>
-						<span
-							className="text-blue-700 cursor-pointer"
-							onClick={() => setReplyBoxOpen(true)}
+				<div className="flex flex-col gap-1 flex-grow">
+					<span>
+						{comment.user.name}
+						<CommentTimestamp
+							className="text-xs text-muted-foreground ml-2"
+							timestamp={comment.timestamp}
+						/>
+					</span>
+					<div className="text-sm">
+						{comment.content.split("\n").map((line, i) => (
+							<p key={i}>{line}</p>
+						))}
+					</div>
+					{comment.parentId === null && (
+						<>
+							<span
+								className="text-blue-700 cursor-pointer"
+								onClick={() => setReplyBoxOpen(true)}
+							>
+								Reply
+							</span>
+						</>
+					)}
+				</div>
+				<div className="w-10">
+					<DropdownMenu onOpenChange={setActionsOpen}>
+						<DropdownMenuTrigger
+							className={clsx(
+								"p-2 outline-none focus:bg-secondary rounded-full",
+								{
+									invisible: !(showActions || actionsOpen),
+									visible: showActions || actionsOpen,
+								},
+							)}
 						>
-							Reply
-						</span>
-						{replyBoxOpen && (
-							<CommentBox
-								onSubmit={async (values) => {
-									const newReply = await postComment(
-										comment.recipeId,
-										comment.id,
-										values.content,
-									);
-									setReplies([...replies, newReply]);
-									setReplyBoxOpen(false);
+							<EllipsisVerticalIcon />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuItem
+								onSelect={async () => {
+									await navigator.clipboard.writeText(comment.content);
 								}}
-								onCancel={() => setReplyBoxOpen(false)}
-								showCancel={true}
-							/>
-						)}
-						<div className="flex flex-col gap-2 sm:gap-4 mt-2">
-							{replies.map((reply) => {
-								return <Comment key={reply.id} comment={reply} />;
-							})}
-						</div>
-					</>
-				)}
+							>
+								Copy
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
 			</div>
+			{comment.parentId === null && (
+				<div className="flex flex-col gap-2 mt-2 ml-16">
+					{replyBoxOpen && (
+						<CommentBox
+							onSubmit={async (values) => {
+								const newReply = await postComment(
+									comment.recipeId,
+									comment.id,
+									values.content,
+								);
+								setReplies([...replies, newReply]);
+								setReplyBoxOpen(false);
+							}}
+							onCancel={() => setReplyBoxOpen(false)}
+							showCancel={true}
+						/>
+					)}
+					<div className="flex flex-col gap-2 sm:gap-4">
+						{replies.map((reply) => {
+							return <Comment key={reply.id} comment={reply} />;
+						})}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
