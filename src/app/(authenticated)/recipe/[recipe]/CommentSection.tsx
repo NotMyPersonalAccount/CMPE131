@@ -115,10 +115,12 @@ export default function CommentSection({
 }
 
 export function CommentBox({
+	value,
 	onSubmit,
 	onCancel,
 	showCancel,
 }: {
+	value?: string;
 	onSubmit?: (values: z.infer<typeof commentSchema>) => void;
 	onCancel?: () => void;
 	showCancel: boolean;
@@ -126,9 +128,13 @@ export function CommentBox({
 	const form = useForm<z.infer<typeof commentSchema>>({
 		resolver: zodResolver(commentSchema),
 		defaultValues: {
-			content: "",
+			content: value ?? "",
 		},
 	});
+
+	useEffect(() => {
+		form.setValue("content", value ?? "");
+	}, [value]);
 
 	return (
 		<Form {...form}>
