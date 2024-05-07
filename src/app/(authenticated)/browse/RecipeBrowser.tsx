@@ -13,7 +13,11 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import prisma from "@/lib/prisma";
-import { HeartIcon, MessageSquareTextIcon } from "lucide-react";
+import {
+	MessageSquareTextIcon,
+	ThumbsDownIcon,
+	ThumbsUpIcon,
+} from "lucide-react";
 import Searchbar from "./Searchbar";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -118,10 +122,15 @@ export async function RecipeBrowserContent({
 						<div className="flex gap-2 sm:gap-4">
 							<div className="flex gap-1">
 								{recipe.likeScore}
-								<HeartIcon
-									fill={recipe.likes.length > 0 ? "red" : "none"}
-									color={recipe.likes.length > 0 ? "red" : "currentColor"}
-								/>
+								{recipe.likes.length > 0 ? (
+									recipe.likes[0].liked ? (
+										<ThumbsUpIcon fill="currentColor" />
+									) : (
+										<ThumbsDownIcon fill="currentColor" />
+									)
+								) : (
+									<ThumbsUpIcon />
+								)}
 							</div>
 							<div className="flex gap-1">
 								{recipe._count.comments}
