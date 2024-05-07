@@ -120,7 +120,7 @@ export async function RecipeBrowserContent({
 				<CardFooter>
 					<div className="w-full mt-6 flex justify-between items-center">
 						<div className="flex gap-2 sm:gap-4">
-							<div className="flex gap-1">
+							<div className="flex gap-2">
 								{recipe.likes.length > 0 ? (
 									recipe.likes[0].liked ? (
 										<ThumbsUpIcon fill="currentColor" />
@@ -132,17 +132,15 @@ export async function RecipeBrowserContent({
 								)}
 								{recipe.likeScore}
 							</div>
-							<div className="flex gap-1">
+							<div className="flex gap-2">
 								<MessageSquareTextIcon />
 								{recipe._count.comments}
 							</div>
-							<div className="flex gap-1">
-								<BookmarkButton
-									recipeId={recipe.id}
-									bookmarked={recipe.bookmarks.length > 0}
-								/>
-								{recipe._count.bookmarks}
-							</div>
+							<BookmarkButton
+								recipeId={recipe.id}
+								bookmarked={recipe.bookmarks.length > 0}
+								bookmarkedCount={recipe._count.bookmarks}
+							/>
 						</div>
 						<TooltipProvider>
 							<Tooltip>

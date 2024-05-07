@@ -53,6 +53,11 @@ async function Recipe({ id }: { id: string }) {
 							userId: session.data.id,
 						},
 					},
+					_count: {
+						select: {
+							bookmarks: true,
+						},
+					},
 				},
 			})
 			.catch(() => null),
@@ -101,10 +106,11 @@ async function Recipe({ id }: { id: string }) {
 					likes={likes}
 					dislikes={dislikes}
 				/>
-				<Button variant="secondary" className="w-14" asChild>
+				<Button variant="secondary" className="w-18" asChild>
 					<BookmarkButton
 						recipeId={recipe.id}
 						bookmarked={recipe.bookmarks.length > 0}
+						bookmarkedCount={recipe._count.bookmarks}
 					/>
 				</Button>
 			</div>

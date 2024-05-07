@@ -8,11 +8,13 @@ import clsx from "clsx";
 export default function BookmarkButton({
 	recipeId,
 	bookmarked: _bookmarked,
+	bookmarkedCount: _bookmarkedCount,
 	className,
 	...props
 }: {
 	recipeId: string;
 	bookmarked: boolean;
+	bookmarkedCount: number;
 } & LucideProps) {
 	const [_, startTransition] = useTransition();
 	const [bookmarked, setBookmarked] = useOptimistic(
@@ -21,15 +23,26 @@ export default function BookmarkButton({
 			return bookmarked;
 		},
 	);
+	const [bookmarkedCount, setBookmarkedCount] = useOptimistic(
+		_bookmarkedCount,
+		(_, bookmarkedCount: number) => {
+			return bookmarkedCount;
+		},
+	);
 
 	return (
-		<BookmarkIcon
-			className={clsx("cursor-pointer", className)}
-			fill={bookmarked ? "currentColor" : "none"}
+		<div
+			className={clsx("flex gap-2 cursor-pointer", className)}
 			onClick={async () => {
-				startTransition(() => setBookmarked(!bookmarked));
+				startTransition(() => {
+					setBookmarked(!bookmarked);
+					setBookmarkedCount(bookmarkedCount + (bookmarked ? -1 : 1));
+				});
 				await bookmarkRecipe(recipeId, !bookmarked);
 			}}
-		/>
+		>
+			<BookmarkIcon fill={bookmarked ? "currentColor" : "none"} {...props} />
+			{bookmarkedCount}
+		</div>
 	);
 }
