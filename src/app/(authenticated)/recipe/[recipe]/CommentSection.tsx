@@ -116,11 +116,13 @@ export default function CommentSection({
 
 export function CommentBox({
 	value,
+	submitText,
 	onSubmit,
 	onCancel,
 	showCancel,
 }: {
 	value?: string;
+	submitText?: string;
 	onSubmit?: (values: z.infer<typeof commentSchema>) => void;
 	onCancel?: () => void;
 	showCancel: boolean;
@@ -163,7 +165,10 @@ export function CommentBox({
 				/>
 				<div className="justify-end flex gap-2">
 					{showCancel && <Button onClick={() => onCancel?.()}>Cancel</Button>}
-					<SubmitButton submitting={form.formState.isSubmitting} />
+					<SubmitButton
+						text={submitText}
+						submitting={form.formState.isSubmitting}
+					/>
 				</div>
 			</form>
 		</Form>
