@@ -69,7 +69,7 @@ export async function RecipeBrowserContent({
 					},
 				},
 				_count: {
-					select: { comments: true },
+					select: { comments: true, bookmarks: true },
 				},
 			},
 			where: {
@@ -136,10 +136,13 @@ export async function RecipeBrowserContent({
 								<MessageSquareTextIcon />
 								{recipe._count.comments}
 							</div>
-							<BookmarkButton
-								recipeId={recipe.id}
-								bookmarked={recipe.bookmarks.length > 0}
-							/>
+							<div className="flex gap-1">
+								<BookmarkButton
+									recipeId={recipe.id}
+									bookmarked={recipe.bookmarks.length > 0}
+								/>
+								{recipe._count.bookmarks}
+							</div>
 						</div>
 						<TooltipProvider>
 							<Tooltip>
